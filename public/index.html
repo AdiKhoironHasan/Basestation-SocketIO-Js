@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>KRSBI Basetation</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.5.1.slim.min.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+</head>
+
+<body>
+    <br />
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-xs-12">
+                <div class="card"">
+                    <div class="card-header bg-secondary text-center"> 
+                        <b>Robot 1</b> 
+                    </div>
+                    <div class="card-body">
+                        <img class="card-img-top"
+                        id="frame0"
+                        src="https://cdn0-production-images-kly.akamaized.net/pXrJZJm1DIgLge1a8Xu4fXXTAcI=/640x640/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/1572564/original/059629800_1492680972-Buah-Nanas2.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xs-12">
+                <div class="card"">
+                    <div class="card-header bg-secondary text-center"> 
+                        <b>Robot 2</b> 
+                    </div>
+                    <div class="card-body">
+                        <img class="card-img-top"
+                        id="frame1"
+                        src="https://cdn0-production-images-kly.akamaized.net/pXrJZJm1DIgLge1a8Xu4fXXTAcI=/640x640/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/1572564/original/059629800_1492680972-Buah-Nanas2.jpg">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-warning btn-block" onclick="startFunction()">Start</button>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col">
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="minFunction()"><<</button>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col text-center">
+                        <h1 id='globalFlagValue'>0</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <span>update by : </span>
+                        <span id='globalFlagUpdater'>None</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="float-left">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="plusFunction()">>></button>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-danger btn-block" onclick="resetFunction()">Reset</button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <script src="socket.io.js"></script>
+    <script>
+        var socket = io('http://192.168.250.180:14046');
+        socket.on('frame', (data) => {
+            document.getElementById("frame" + data.id).src = "data:image/png;base64," + data.base64
+        })
+        socket.on('broadcast', (data) => {
+            console.log(data)
+            console.log(data.value)
+            document.getElementById("globalFlagValue").innerHTML = data.value
+            document.getElementById("globalFlagUpdater").innerHTML = data.updater
+        })
+        startFunction = () => {
+            socket.emit('update',{
+                'updater': 'basestation',
+                'value': 1,
+            })
+        }
+        resetFunction = () => {
+            socket.emit('update',{
+                'updater': 'basestation',
+                'value': 0,
+            })
+        }
+        plusFunction = () => {
+            socket.emit('update',{
+                'updater': 'basestation',
+                'value': parseInt(document.getElementById("globalFlagValue").innerHTML) + 1,
+            })
+        }
+        minFunction = () => {
+            socket.emit('update',{
+                'updater': 'basestation',
+                'value': parseInt(document.getElementById("globalFlagValue").innerHTML) - 1,
+            })
+        }
+    </script>
+</body>
+
+</html>

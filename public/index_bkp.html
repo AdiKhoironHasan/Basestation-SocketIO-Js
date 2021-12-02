@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>KRSBI Basetation</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.5.1.slim.min.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+</head>
+
+<body>
+    <br />
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card"">
+                    <div class=" card-header bg-secondary">
+                    <b class=" mx-auto">Robot 1</b>
+                </div>
+                <ul class="list-group list-group-flush" id="robot0">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4">Bola</div>
+                            <div class="col-1">:</div>
+                            <div class="col-7">hehe</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card"">
+                    <div class=" card-header bg-secondary">
+                <b class=" mx-auto">Robot 2</b>
+            </div>
+            <ul class="list-group list-group-flush" id="robot1">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">Bola</div>
+                        <div class="col-1">:</div>
+                        <div class="col-7">hehe</div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">Bola</div>
+                        <div class="col-1">:</div>
+                        <div class="col-7">hehe</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col"></div>
+        <div class="col">
+            <button type="button" class="btn btn-primary btn-block" onclick="startFunction()">Start</button>
+            <button type="button" class="btn btn-danger btn-block" onclick="resetFunction()">Reset</button>
+        </div>
+        <div class="col"></div>
+    </div>
+    </div>
+    <script src="socket.io.js"></script>
+    <script>
+        var socket = io('http://localhost:14046');
+        socket.on('broadcast', (data) => {
+            data.map((val, index) => {
+                var listStr = ``
+                val.map(item => {
+                    listStr += `<li class="list-group-item"><div class="row"><div class="col-4">` + item.name + `</div>`
+                    listStr += `<div class="col-1">:</div>`
+                    listStr += `<div class="col-7">` + item.value + `</div></div></li>`
+                })
+                var element = document.getElementById("robot" + index);
+                element.innerHTML = listStr;
+            })
+        })
+        startFunction = () => {
+            socket.emit('update', [
+                {
+                    'id_robot': 0,
+                    'id_item': 4,
+                    'name': 'globalFlag',
+                    'value': 1,
+                }
+            ])
+            socket.emit('update', [
+                {
+                    'id_robot': 1,
+                    'id_item': 4,
+                    'name': 'globalFlag',
+                    'value': 1,
+                }
+            ])
+        }
+        resetFunction = () => {
+            socket.emit('update', [
+                {
+                    'id_robot': 0,
+                    'id_item': 4,
+                    'name': 'globalFlag',
+                    'value': 0,
+                }
+            ])
+            socket.emit('update', [
+                {
+                    'id_robot': 1,
+                    'id_item': 4,
+                    'name': 'globalFlag',
+                    'value': 0,
+                }
+            ])
+        }
+    </script>
+</body>
+
+</html>
